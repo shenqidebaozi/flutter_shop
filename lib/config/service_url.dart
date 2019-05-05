@@ -1,5 +1,21 @@
-const serviceUrl = 'http://test.baixingliangfan.cn/baixing/';
+const serviceUrl =
+    "https://wxmini.baixingliangfan.cn/baixing/"; //此端口针对于正版用户开放，可自行fiddle获取。
 const servicePath = {
-  //首页信息
-  'homePageContent': serviceUrl + 'wxmini/homePageContent',
+  'homePageContext': serviceUrl + 'wxmini/homePageContent', // 商家首页信息
+  'homePageBelowConten': serviceUrl + 'wxmini/homePageBelowConten', //商城首页热卖商品拉取
+  'getCategory': serviceUrl + 'wxmini/getCategory', //获得商品类别信息
+  'getMallGoods': serviceUrl + 'wxmini/getMallGoods', //分类商品列表获取
+  "shopGoodsDetailImg": serviceUrl + "wxmini/getGoodDetailById/", //商品详情
+  'searachGoods': serviceUrl + "wxmini/searchGoods", //商品搜索接口
+  'integralGoodsShops': serviceUrl + 'wxmini/integralGoodsShops', //门店信息列表接口
+  'shopInfoDetail': serviceUrl + "wxmini/integralGoods", //门店信息详情接口
+  'ada': serviceUrl + 'wxmini/getHomePageTip', //广告页
+  'aboutUs': serviceUrl + 'wxmini/aboutUs', //关于商城
+  'fujiCouponsPic': serviceUrl + 'wxmini/fujiCouponsPic', //优惠券图片接口
+  'getMyOrders': serviceUrl + 'wxmini/getMyOrders', //我的订单
+  'fujiCouponsGetByself':
+      serviceUrl + 'wxmini/fujiCouponsGetByself', //优惠券图片接口byid
+  'getOrderInfo': serviceUrl + 'wxmini/orderInfo', //我的订单详情
+  'addAddress': serviceUrl + 'wxmini/addUserAddress', //新增收货地址
+  'storesCouponsGrid': serviceUrl + 'wxmini/storesCouponsGrid',
 };
