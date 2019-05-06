@@ -4,6 +4,7 @@ import 'home_page.dart';
 import 'member_page.dart';
 import 'cart_page.dart';
 import 'category_page.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class IndexPage extends StatefulWidget {
   @override
@@ -32,9 +33,11 @@ class _IndexPageState extends State<IndexPage> {
   }
 
   //页面切换
-  final List tabBodies = [HomePage(), CartPage(), CategoryPage(), MemberPage()];
+  final List <Widget> tabBodies = [HomePage(), CartPage(), CategoryPage(), MemberPage()];
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.instance = ScreenUtil(width: 750, height: 1334)..init(context);
+
     return Scaffold(
       // 默认底色
       backgroundColor: Color.fromRGBO(233, 245, 245, 1.0),
@@ -52,7 +55,10 @@ class _IndexPageState extends State<IndexPage> {
           });
         },
       ),
-      body: currentPage,
+      body: IndexedStack(
+        index: currentIndex,
+        children: tabBodies,
+      ),
     );
   }
 }
