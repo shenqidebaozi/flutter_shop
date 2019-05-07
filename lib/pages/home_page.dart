@@ -4,6 +4,7 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -12,17 +13,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
   String homePageContent = '正在获取数据';
-
+  int page = 1;
+  List<Map> hotGoodsList = [];
   ScrollController controller = ScrollController();
-
+  GlobalKey<RefreshFooterState> _footkey = new GlobalKey<RefreshFooterState>();
+  
   @override
   void initState() {
-    getHomePageContent().then((val) {
-      setState(() {
-        homePageContent = val.toString();
-      });
-    });
-
     super.initState();
   }
 
@@ -32,7 +29,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
         appBar: AppBar(title: Text('查券商城')),
         body: FutureBuilder(
             //异步方法
-            future: getHomePageContent(),
+            future: request('homePageContext', formData: {'lon': '115.02932', 'lat': '35.76189'}),
             // 构造器 都需要接受上下文参数 和 snapshot
             builder: (context, snapshot) {
               if (snapshot.hasData) {
@@ -53,32 +50,58 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
                 if (navitor.length > 10) {
                   navitor.removeRange(10, navitor.length);
                 }
-                return SingleChildScrollView(
-                    controller: controller,
-                    child: Column(
-                      children: <Widget>[
-                        SwiperDiy(swiperDataList: swiper),
-                        TopNavigator(
-                          navigatorList: navitor,
-                        ),
-                        AdBanner(
-                          adPicture: adPicture,
-                        ),
-                        Leader(
-                          leaderImage: leaderImage,
-                          leaderPhone: leaderPhone,
-                        ),
-                        Recommend(
-                          recommendList: recommendList,
-                        ),
-                        FloorTitle(picture_address: floor1Title),
-                        FloorContent(floorGoodsList: floor1),
-                        FloorTitle(picture_address: floor2Title),
-                        FloorContent(floorGoodsList: floor2),
-                        FloorTitle(picture_address: floor3Title),
-                        FloorContent(floorGoodsList: floor3),
-                      ],
-                    ));
+                return EasyRefresh(
+                  refreshFooter:ClassicsFooter(
+                    key: _footkey,
+                    bgColor: Colors.white,
+                    textColor: Colors.pink,
+                    moreInfoColor: Colors.pink,
+                    showMore: true,
+                    noMoreText: '',
+                    moreInfo: '嘿咻,嘿咻',
+                    loadedText: '加载完毕',
+                    loadText: '上拉加载',
+                    loadReadyText: '等一下,请再等一下',
+                    loadingText: '亲亲,我在加载中',
+                  ) ,
+                  child: ListView(
+                    children: <Widget>[
+                      SwiperDiy(swiperDataList: swiper),
+                      TopNavigator(
+                        navigatorList: navitor,
+                      ),
+                      AdBanner(
+                        adPicture: adPicture,
+                      ),
+                      Leader(
+                        leaderImage: leaderImage,
+                        leaderPhone: leaderPhone,
+                      ),
+                      Recommend(
+                        recommendList: recommendList,
+                      ),
+                      FloorTitle(picture_address: floor1Title),
+                      FloorContent(floorGoodsList: floor1),
+                      FloorTitle(picture_address: floor2Title),
+                      FloorContent(floorGoodsList: floor2),
+                      FloorTitle(picture_address: floor3Title),
+                      FloorContent(floorGoodsList: floor3),
+                      _hotGoods(),
+                    ],
+                  ),
+                  loadMore: () async {
+                    print('开始加载更多.........');
+                    var formPage = {'page': page};
+                    await request('homePageBelowConten', formData: formPage).then((val) {
+                      var data = json.decode(val.toString());
+                      List<Map> newGoodsList = (data['data'] as List).cast();
+                      setState(() {
+                        hotGoodsList.addAll(newGoodsList);
+                        page++;
+                      });
+                    });
+                  },
+                );
               } else {
                 return Center(
                   child: Text(
@@ -88,6 +111,64 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
                 );
               }
             }));
+  }
+
+  Widget _hotTitle = Container(
+    margin: EdgeInsets.only(top: 10),
+    alignment: Alignment.center,
+    color: Colors.transparent,
+    padding: EdgeInsets.all(5.0),
+    child: Text('火爆专区'),
+  );
+  //火爆专区流式布局组件
+  Widget _wrapList() {
+    if (hotGoodsList.length != 0) {
+      List<Widget> listWidget = hotGoodsList.map((val) {
+        return InkWell(
+          onTap: () {},
+          child: Container(
+            width: ScreenUtil().setWidth(372),
+            color: Colors.white,
+            padding: EdgeInsets.all(5.0),
+            margin: EdgeInsets.only(bottom: 3.0),
+            child: Column(
+              children: <Widget>[
+                Image.network(
+                  val['image'],
+                  width: ScreenUtil().setWidth(370),
+                ),
+                Text(val['name'], maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.pink, fontSize: ScreenUtil().setSp(26))),
+                Row(
+                  children: <Widget>[
+                    Text('¥${val['mallPrice']}'),
+                    Text(
+                      '¥${val['price']}',
+                      style: TextStyle(color: Colors.black26, decoration: TextDecoration.lineThrough),
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      }).toList();
+
+      return Wrap(
+        spacing: 2,
+        children: listWidget,
+      );
+    } else {
+      return Text('');
+    }
+  }
+
+  // 火爆专区
+  Widget _hotGoods() {
+    return Container(
+      child: Column(
+        children: <Widget>[_hotTitle, _wrapList()],
+      ),
+    );
   }
 
   @override
@@ -150,7 +231,7 @@ class TopNavigator extends StatelessWidget {
     );
   }
 
-// 顶部分类
+// 顶部��类
   @override
   Widget build(BuildContext context) {
     return Container(
