@@ -11,13 +11,14 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
+class _HomePageState extends State<HomePage>
+    with AutomaticKeepAliveClientMixin {
   String homePageContent = '正在获取数据';
   int page = 1;
   List<Map> hotGoodsList = [];
   ScrollController controller = ScrollController();
   GlobalKey<RefreshFooterState> _footkey = new GlobalKey<RefreshFooterState>();
-  
+
   @override
   void initState() {
     super.initState();
@@ -29,29 +30,38 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
         appBar: AppBar(title: Text('查券商城')),
         body: FutureBuilder(
             //异步方法
-            future: request('homePageContext', formData: {'lon': '115.02932', 'lat': '35.76189'}),
+            future: request('homePageContext',
+                formData: {'lon': '115.02932', 'lat': '35.76189'}),
             // 构造器 都需要接受上下文参数 和 snapshot
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 var data = json.decode(snapshot.data.toString());
                 List<Map> swiper = (data['data']['slides'] as List).cast();
                 List<Map> navitor = (data['data']['category'] as List).cast();
-                String adPicture = data['data']['advertesPicture']['PICTURE_ADDRESS'];
+                String adPicture =
+                    data['data']['advertesPicture']['PICTURE_ADDRESS'];
                 String leaderImage = data['data']['shopInfo']['leaderImage'];
                 String leaderPhone = data['data']['shopInfo']['leaderPhone'];
-                List<Map> recommendList = (data['data']['recommend'] as List).cast();
-                String floor1Title = data['data']['floor1Pic']['PICTURE_ADDRESS']; //楼层1的标题图片
-                String floor2Title = data['data']['floor2Pic']['PICTURE_ADDRESS']; //楼层1的标题图片
-                String floor3Title = data['data']['floor3Pic']['PICTURE_ADDRESS']; //楼层1的标题图片
-                List<Map> floor1 = (data['data']['floor1'] as List).cast(); //楼层1商品和图片
-                List<Map> floor2 = (data['data']['floor2'] as List).cast(); //楼层1商品和图片
-                List<Map> floor3 = (data['data']['floor3'] as List).cast(); //楼层1商品和图片
+                List<Map> recommendList =
+                    (data['data']['recommend'] as List).cast();
+                String floor1Title =
+                    data['data']['floor1Pic']['PICTURE_ADDRESS']; //楼层1的标题图片
+                String floor2Title =
+                    data['data']['floor2Pic']['PICTURE_ADDRESS']; //楼层1的标题图片
+                String floor3Title =
+                    data['data']['floor3Pic']['PICTURE_ADDRESS']; //楼层1的标题图片
+                List<Map> floor1 =
+                    (data['data']['floor1'] as List).cast(); //楼层1商品和图片
+                List<Map> floor2 =
+                    (data['data']['floor2'] as List).cast(); //楼层1商品和图片
+                List<Map> floor3 =
+                    (data['data']['floor3'] as List).cast(); //楼层1商品和图片
                 print(recommendList);
                 if (navitor.length > 10) {
                   navitor.removeRange(10, navitor.length);
                 }
                 return EasyRefresh(
-                  refreshFooter:ClassicsFooter(
+                  refreshFooter: ClassicsFooter(
                     key: _footkey,
                     bgColor: Colors.white,
                     textColor: Colors.pink,
@@ -63,7 +73,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
                     loadText: '上拉加载',
                     loadReadyText: '等一下,请再等一下',
                     loadingText: '亲亲,我在加载中',
-                  ) ,
+                  ),
                   child: ListView(
                     children: <Widget>[
                       SwiperDiy(swiperDataList: swiper),
@@ -92,7 +102,8 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
                   loadMore: () async {
                     print('开始加载更多.........');
                     var formPage = {'page': page};
-                    await request('homePageBelowConten', formData: formPage).then((val) {
+                    await request('homePageBelowConten', formData: formPage)
+                        .then((val) {
                       var data = json.decode(val.toString());
                       List<Map> newGoodsList = (data['data'] as List).cast();
                       setState(() {
@@ -137,13 +148,19 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
                   val['image'],
                   width: ScreenUtil().setWidth(370),
                 ),
-                Text(val['name'], maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.pink, fontSize: ScreenUtil().setSp(26))),
+                Text(val['name'],
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        color: Colors.pink, fontSize: ScreenUtil().setSp(26))),
                 Row(
                   children: <Widget>[
                     Text('¥${val['mallPrice']}'),
                     Text(
                       '¥${val['price']}',
-                      style: TextStyle(color: Colors.black26, decoration: TextDecoration.lineThrough),
+                      style: TextStyle(
+                          color: Colors.black26,
+                          decoration: TextDecoration.lineThrough),
                     )
                   ],
                 )
@@ -301,7 +318,10 @@ class Recommend extends StatelessWidget {
     return Container(
       alignment: Alignment.centerLeft,
       padding: EdgeInsets.fromLTRB(10, 2, 0, 5),
-      decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(width: 0.5, color: Colors.black12))),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          border:
+              Border(bottom: BorderSide(width: 0.5, color: Colors.black12))),
       child: Text('商品推荐', style: TextStyle(color: Colors.pink)),
     );
   }
@@ -314,14 +334,18 @@ class Recommend extends StatelessWidget {
         height: ScreenUtil().setHeight(330),
         width: ScreenUtil().setWidth(250),
         padding: EdgeInsets.all(8.0),
-        decoration: BoxDecoration(color: Colors.white, border: Border(left: BorderSide(width: 0.5, color: Colors.black12))),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            border:
+                Border(left: BorderSide(width: 0.5, color: Colors.black12))),
         child: Column(
           children: <Widget>[
             Image.network(recommendList[index]['image']),
             Text('${recommendList[index]['mallPrice']}'),
             Text(
               '${recommendList[index]['price']}',
-              style: TextStyle(decoration: TextDecoration.lineThrough, color: Colors.grey),
+              style: TextStyle(
+                  decoration: TextDecoration.lineThrough, color: Colors.grey),
             ),
           ],
         ),
@@ -389,7 +413,10 @@ class FloorContent extends StatelessWidget {
       children: <Widget>[
         _goodsItem(floorGoodsList[0]),
         Column(
-          children: <Widget>[_goodsItem(floorGoodsList[1]), _goodsItem(floorGoodsList[2])],
+          children: <Widget>[
+            _goodsItem(floorGoodsList[1]),
+            _goodsItem(floorGoodsList[2])
+          ],
         )
       ],
     );
@@ -397,7 +424,10 @@ class FloorContent extends StatelessWidget {
 
   Widget _otherGoods() {
     return Row(
-      children: <Widget>[_goodsItem(floorGoodsList[3]), _goodsItem(floorGoodsList[4])],
+      children: <Widget>[
+        _goodsItem(floorGoodsList[3]),
+        _goodsItem(floorGoodsList[4])
+      ],
     );
   }
 

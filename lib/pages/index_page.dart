@@ -33,7 +33,12 @@ class _IndexPageState extends State<IndexPage> {
   }
 
   //页面切换
-  final List <Widget> tabBodies = [HomePage(), CartPage(), CategoryPage(), MemberPage()];
+  final List<Widget> tabBodies = [
+    HomePage(),
+    CategoryPage(),
+    CartPage(),
+    MemberPage()
+  ];
   @override
   Widget build(BuildContext context) {
     ScreenUtil.instance = ScreenUtil(width: 750, height: 1334)..init(context);
