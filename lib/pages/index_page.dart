@@ -13,15 +13,7 @@ class IndexPage extends StatefulWidget {
 
 class _IndexPageState extends State<IndexPage> {
   //图标列表
-  final List<BottomNavigationBarItem> bottomTabs = [
-    BottomNavigationBarItem(icon: Icon(CupertinoIcons.home), title: Text("首页")),
-    BottomNavigationBarItem(
-        icon: Icon(CupertinoIcons.search), title: Text("分类")),
-    BottomNavigationBarItem(
-        icon: Icon(CupertinoIcons.shopping_cart), title: Text("购物车")),
-    BottomNavigationBarItem(
-        icon: Icon(CupertinoIcons.profile_circled), title: Text("我的"))
-  ];
+  final List<BottomNavigationBarItem> bottomTabs = [BottomNavigationBarItem(icon: Icon(CupertinoIcons.home), title: Text("首页")), BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), title: Text("分类")), BottomNavigationBarItem(icon: Icon(CupertinoIcons.shopping_cart), title: Text("购物车")), BottomNavigationBarItem(icon: Icon(CupertinoIcons.profile_circled), title: Text("我的"))];
   //索引
   int currentIndex = 0;
   var currentPage;
@@ -33,12 +25,7 @@ class _IndexPageState extends State<IndexPage> {
   }
 
   //页面切换
-  final List<Widget> tabBodies = [
-    HomePage(),
-    CategoryPage(),
-    CartPage(),
-    MemberPage()
-  ];
+  final List<Widget> tabBodies = [HomePage(), CategoryPage(), CartPage(), ChewieDemo()];
   @override
   Widget build(BuildContext context) {
     ScreenUtil.instance = ScreenUtil(width: 750, height: 1334)..init(context);
